@@ -1,3 +1,5 @@
+from collections import Counter
+
 def get_file_content(filename):
     content = ''
 
@@ -7,19 +9,32 @@ def get_file_content(filename):
 
     return content
 
-def get_alphabet(filename):
+def get_alphabet(filename : str) -> dict:
+    """
+    This function returns a dictionary containing 
+    the histogram of occurrences of a file.
+
+    This dictionary also has the keys 1 and 0, 
+    that will abstract a hoffman tree
+    """
+
     content = ''
-    alphabet = {}
 
-    with open(filename) as f:
-        for line in f:
-            content+=line
-            for ch in line:
-                if not ch in alphabet:
-                    alphabet[ch] = {'probability': 0, 0: None, 1: None, 'value': ch}
-                alphabet[ch]['probability']+=1
+    with open(filename) as file:
+        for line in file:
+            content += line
+    
+    char_histogram = Counter(content)
 
-    return alphabet
+    def format_dict(k, v):
+        retn = {}
+        retn['probability'], retn['value'] = v, k
+        retn[0], retn[1] = None, None
+        return retn
+
+    char_histogram = { k: format_dict(k, v) for k,v in char_histogram.items() }
+
+    return char_histogram
 
 def huffman_tree(alphabet):
     while len(alphabet) > 1:
