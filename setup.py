@@ -9,7 +9,7 @@ with open('requirements.txt', 'r') as requirements_file:
 requirements = requirements_text.split()
 
 setuptools.setup(
-    name='pyhuffman',
+    name='pyhuff',
     version='1.0',
     description='This is a huffman code compressor',
     url='https://github.com/projeto-de-algoritmos-2019-2/project-3-huffman-code-cli',
@@ -21,5 +21,5 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     install_requires=requirements,
-    scripts=['bin/pyhuffman']
+    scripts=['pyhuff/bin/pyhuff']
 )
