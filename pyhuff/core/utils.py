@@ -1,4 +1,5 @@
 from collections import Counter
+import pickle
 
 def get_file_content(filename):
     content = ''
@@ -6,6 +7,9 @@ def get_file_content(filename):
     with open(filename) as f:
         for line in f:
             content+=line
+
+    # remove all non ascci chars
+    # content = ''.join([i if ord(i) < 128 else ' ' for i in content])
 
     return content
 
@@ -18,11 +22,7 @@ def get_alphabet(filename : str) -> dict:
     that will abstract a hoffman tree
     """
 
-    content = ''
-
-    with open(filename) as file:
-        for line in file:
-            content += line
+    content = get_file_content(filename)
     
     char_histogram = Counter(content)
 
@@ -59,6 +59,26 @@ def huffman_tree(alphabet):
 
     return alphabet[root]
 
+def save_huffman_tree(huffman_tree, filename):
+    pickle.dump(huffman_tree, open(filename, 'wb'))
+
+def save_ciphered_file(ciphered, filename):
+    # TODO: Convert string text to bytes
+    pickle.dump(ciphered, open(filename, 'wb'))
+
+def load_huffman_tree(filename):
+    huffman_tree = pickle.load(open(filename, 'rb'))
+    return huffman_tree
+
+def load_ciphered_file(filename):
+    # TODO: Convert bytes to string text
+    ciphered = pickle.load(open(filename, 'rb'))
+    return ciphered
+
+def save_file_content(deciphered_text, filename):
+    with open(filename, "w") as file:
+        file.write(deciphered_text)
+
 def huffman_cipher(text, huffman_tree):
     ciphered = ''
 
@@ -78,6 +98,7 @@ def huffman_cipher(text, huffman_tree):
     return ciphered
 
 def huffman_decipher(ciphered, huffman_tree):
+    
     plain_text = ''
     current_branch = huffman_tree
 

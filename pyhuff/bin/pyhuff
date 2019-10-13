@@ -3,7 +3,13 @@
 import sys
 import pyhuff.core as hf
 
-if len(sys.argv) < 2:
-    print('Error: no filename given')
-else:
+if len(sys.argv) == 2:
     hf.compress(sys.argv[1])
+
+elif len(sys.argv) == 3:
+    hf.decode(sys.argv[1], sys.argv[2])
+
+else:
+    print('Error: This operation is not supported.')
+    print('`pyhuff <filename>` to encode')
+    print('`pyhuff <filename> <huffman_tree_file>` to decode')
