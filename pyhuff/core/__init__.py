@@ -27,8 +27,14 @@ def compress(FILENAME):
         huffman_tree
     )
 
-    utils.save_ciphered_file(ciphered, filename='encoded_file.huff')
-    utils.save_huffman_tree(huffman_tree, filename='decoding_tree.huff')
+    zipped_file = FILENAME + '.zip.huff'
+    decode_tree = FILENAME + '.dec.tree.huff'
 
-    print('Successfully encoded file')
-    decode('encoded_file.huff', 'decoding_tree.huff')
+    utils.save_ciphered_file(ciphered, filename=zipped_file)
+    utils.save_huffman_tree(huffman_tree, filename=decode_tree)
+
+    ratio = utils.compression_ratio(FILENAME, zipped_file, decode_tree)
+
+    print('Successfully encoded file.', ratio, " %", " of original size ")
+    
+    # decode(zipped_file, decode_tree)

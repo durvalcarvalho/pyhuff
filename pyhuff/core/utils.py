@@ -1,5 +1,6 @@
-from collections import Counter
+import os
 import pickle
+from collections import Counter
 
 def get_file_content(filename):
     content = ''
@@ -7,9 +8,9 @@ def get_file_content(filename):
     with open(filename) as f:
         for line in f:
             content+=line
-
+    
     # remove all non ascci chars
-    # content = ''.join([i if ord(i) < 128 else ' ' for i in content])
+    content = ''.join([i if ord(i) < 128 else ' ' for i in content])
 
     return content
 
@@ -59,25 +60,69 @@ def huffman_tree(alphabet):
 
     return alphabet[root]
 
+def padding_cipher(ciphered):
+    extra_padding = 8 - len(ciphered) % 8
+
+    for i in range(extra_padding):
+        ciphered += '0'
+    
+    padded_info = "{0:08b}".format(extra_padding)
+
+    # the first 1 byte says how many zeros was added
+    ciphered = padded_info + ciphered
+
+    return ciphered
+
+def remove_padding(padded_cipher):
+    padded_info = padded_cipher[:8]
+    extra_padding = int(padded_info, 2)
+
+    padded_cipher = padded_cipher[8:]
+    cipher = padded_cipher[:-1*extra_padding]
+    
+    return cipher
+
+def get_byte_array(padded_cipher):
+    byte_array = bytearray()
+
+    for i in range(0, len(padded_cipher), 8):
+        byte = padded_cipher[i: i+8]
+        byte = int(byte, 2)
+        byte_array.append(byte)
+    
+    return byte_array
+
 def save_huffman_tree(huffman_tree, filename):
     pickle.dump(huffman_tree, open(filename, 'wb'))
 
 def save_ciphered_file(ciphered, filename):
-    # TODO: Convert string text to bytes
-    pickle.dump(ciphered, open(filename, 'wb'))
+    with open(filename, 'wb') as file:
+        padded_cipher = padding_cipher(ciphered)
+        byte_array = get_byte_array(padded_cipher)
+        file.write(bytes(byte_array))
 
 def load_huffman_tree(filename):
     huffman_tree = pickle.load(open(filename, 'rb'))
     return huffman_tree
 
-def load_ciphered_file(filename):
-    # TODO: Convert bytes to string text
-    ciphered = pickle.load(open(filename, 'rb'))
-    return ciphered
-
 def save_file_content(deciphered_text, filename):
     with open(filename, "w") as file:
         file.write(deciphered_text)
+
+def load_ciphered_file(filename):
+    with open(filename, 'rb') as file:
+        padded_cipher = ""
+        
+        byte = file.read(1)
+        while(byte != b''):
+            byte = ord(byte)
+            bits = bin(byte)[2:].rjust(8, '0')
+            padded_cipher += bits
+            byte = file.read(1)
+        
+        ciphered = remove_padding(padded_cipher)
+    
+    return ciphered
 
 def huffman_cipher(text, huffman_tree):
     ciphered = ''
@@ -112,3 +157,13 @@ def huffman_decipher(ciphered, huffman_tree):
     plain_text += current_branch['value']
 
     return plain_text
+
+def compression_ratio(FILENAME, zipped_file, decode_tree):
+
+    orig_size = os.stat(FILENAME).st_size
+    huff_size = os.stat(zipped_file).st_size
+
+    ratio = huff_size / orig_size
+    ratio = round(ratio*100, 2)
+    
+    return ratio
