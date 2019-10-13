@@ -11,7 +11,9 @@ def get_file_content(filename, check_non_ascii=False):
             content+=line
 
     # remove all non ascii chars
-    filtered = ''.join([i if ord(i) < 128 else ' ' for i in content])
+    filtered = ''.join(
+        [i if ord(i) < 128 else ' ' for i in content]
+    )
 
     if check_non_ascii:
         there_is_lost_data(content, filtered)
@@ -199,3 +201,10 @@ def compression_ratio(FILENAME, zipped_file, decode_tree):
     ratio = round(ratio*100, 2)
     
     return ratio
+
+def get_directory_reference(CIPHERFILE):
+    path = CIPHERFILE.split('/')
+    filename, path[-1] = path[-1], ''
+    path = '/'.join(path)
+    filename = path + filename + '.unzipped.txt'
+    return filename
