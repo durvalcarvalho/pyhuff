@@ -16,7 +16,7 @@ def decode(CIPHERFILE, HUFFMAN_TREE):
 
 
 def compress(FILENAME):
-    histogram = utils.get_alphabet(FILENAME)
+    histogram = utils.get_alphabet(FILENAME, check_non_ascii=True)
 
     huffman_tree = utils.huffman_tree(histogram)
 

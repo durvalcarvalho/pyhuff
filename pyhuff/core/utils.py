@@ -1,20 +1,52 @@
 import os
+import sys
 import pickle
 from collections import Counter
 
-def get_file_content(filename):
+def get_file_content(filename, check_non_ascii=False):
     content = ''
 
     with open(filename) as f:
         for line in f:
             content+=line
+
+    # remove all non ascii chars
+    filtered = ''.join([i if ord(i) < 128 else ' ' for i in content])
+
+    if check_non_ascii:
+        there_is_lost_data(content, filtered)
     
-    # remove all non ascci chars
-    content = ''.join([i if ord(i) < 128 else ' ' for i in content])
+    return filtered
 
-    return content
+def there_is_lost_data(content, filtered):
+    """
+    This function reads a file and removes all non ascii characters. 
+    If any non-ascii characters are found, warns the user that all non-ascii 
+    characters will be lost and if compression should continue
+    """
 
-def get_alphabet(filename : str) -> dict:
+    if content == filtered:
+        return
+    
+    valid = {
+        'yes': True,
+        'ye': True,
+        'y': True,
+    }
+
+    sys.stdout.write(
+        'This file contains non ascii characters.\nCompressing this file ' +
+        'will result in the loss of these characters.\nDo you wish to ' + 
+        'continue? [y/N] '
+    )
+
+    user_answer = input().lower()
+
+    if not user_answer in valid:
+        print('Compression canceled')
+        sys.exit()
+
+def get_alphabet(filename, check_non_ascii=False):
     """
     This function returns a dictionary containing 
     the histogram of occurrences of a file.
@@ -23,7 +55,7 @@ def get_alphabet(filename : str) -> dict:
     that will abstract a hoffman tree
     """
 
-    content = get_file_content(filename)
+    content = get_file_content(filename, check_non_ascii)
     
     char_histogram = Counter(content)
 
