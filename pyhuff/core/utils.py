@@ -206,5 +206,5 @@ def get_directory_reference(CIPHERFILE):
     path = CIPHERFILE.split('/')
     filename, path[-1] = path[-1], ''
     path = '/'.join(path)
-    filename = path + filename + '.unzipped.txt'
+    filename = path + filename + '.txt'
     return filename

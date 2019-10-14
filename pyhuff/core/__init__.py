@@ -2,7 +2,7 @@ name='core'
 
 from . import utils
 
-def decode(CIPHERFILE, HUFFMAN_TREE):
+def decode(CIPHERFILE, HUFFMAN_TREE, OUTPUT_FILENAME):
 
     ciphered = utils.load_ciphered_file(filename=CIPHERFILE)
 
@@ -19,7 +19,7 @@ def decode(CIPHERFILE, HUFFMAN_TREE):
 
     utils.save_file_content(
         deciphered_text, 
-        filename = filename
+        filename = OUTPUT_FILENAME
     )
 
     print('Successfully decoded file')
@@ -40,8 +40,8 @@ def compress(FILENAME):
         huffman_tree
     )
 
-    zipped_file = FILENAME.split('.')[0] + '.zip.huff'
-    decode_tree = FILENAME.split('.')[0] + '.dec.tree.huff'
+    zipped_file = FILENAME.split('.')[0] + '.huff'
+    decode_tree = FILENAME.split('.')[0] + '.tree.huff'
 
     utils.save_ciphered_file(ciphered, filename=zipped_file)
     utils.save_huffman_tree(
@@ -56,5 +56,3 @@ def compress(FILENAME):
     )
 
     print('Successfully encoded file.', ratio, " %", " of original size ")
-    
-    decode(zipped_file, decode_tree)
