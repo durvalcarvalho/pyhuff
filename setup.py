@@ -10,7 +10,7 @@ requirements = requirements_text.split()
 
 setuptools.setup(
     name='pyhuff',
-    version='1.0',
+    version='1.1',
     description='This is a huffman code compressor',
     url='https://github.com/projeto-de-algoritmos-2019-2/project-3-huffman-code-cli',
     author='Victor Moura, Durval Carvalho',
